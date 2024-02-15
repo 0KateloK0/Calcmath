@@ -1,5 +1,4 @@
 #include <vector>
-// #include <common.h>
 #include <fstream>
 #include <iomanip>
 #include <cmath>
@@ -17,39 +16,42 @@ double f(double x, double y) {
     return y + x;
 }
 
+vector<double> RungeKutt() {
+    vector<double> y;
+    y.push_back(YA);
+    double h = (b - a) / N;
+
+    for(size_t i = 1; i <= N; ++i) {
+        double xn = a + i * h;
+        double yn = y[i - 1];
+        
+        double k1 = f(xn, yn);
+        double k2 = f(xn + h / 2, yn + h * k1 / 2);
+        double k3 = f(xn + h / 2, yn + h * k2 / 2);
+        double k4 = f(xn + h, yn + h * k3);
+        y.push_back(yn + h * (k1 + 2 * k2 + 2 * k3 + k4) / 6);
+        // eps.push_back(fabs(-xn + 2 * exp(xn) - 1 - yn));
+    }
+    
+    return y;
+}
+
 class RKSolver {
 public:
     RKSolver() = default;
     vector<double> y;
     vector<double> eps;
     double a = 0, b = 1; // границы
-    unsigned int N = 50; // степень приближения
+    unsigned int N = 10000; // степень приближения
     // наконец узнаю как добавлять лямбда функции в параметры ыыыыы
     void Solve() {
-        // vector<vector<double>> A;
-        // y = vector<double>(1, YA);
-        y.push_back(YA);
-        eps.push_back(0);
-        double h = (b - a) / N;
-
-        for(size_t i = 1; i <= N; ++i) {
-            double xn = a + i * h;
-            double yn = y[i - 1];
-            
-            double k1 = f(xn, yn);
-            double k2 = f(xn + h / 2, yn + h * k1 / 2);
-            double k3 = f(xn + h / 2, yn + h * k2 / 2);
-            double k4 = f(xn + h, yn + h * k3);
-            y.push_back(yn + h * (k1 + 2 * k2 + 2 * k3 + k4) / 6);
-            eps.push_back(fabs(-xn + 2 * exp(xn) - 1 - yn));
-        }
-        // решить получившееся СЛАУ и записать результаты в y
+        
     }
 private:
 
 };
 
-int main() {
+int main(int argc, char** argv) {
     RKSolver s;
     s.Solve();
     std::ofstream output("rk");
